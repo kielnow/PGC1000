@@ -2,10 +2,6 @@
 
 #include "mbed.h"
 
-#ifdef LINE_MAX
-#undef LINE_MAX
-#endif
-
 #define RENDER_ENABLE_DIRTY_CHECK   1
 #define SYSTEM_ENABLE_MEASURE_FPS   1
 #define SYSTEM_ENABLE_FRAME_WAIT    1
@@ -37,9 +33,9 @@ namespace pgc1000
     class Lcd {
     public:
         enum {
-            PAGE_MAX    = 8,
-            LINE_MAX    = 128,
-            LINE_MAX_2  = LINE_MAX >> 1,
+            LCD_PAGE_MAX    = 8,
+            LCD_LINE_MAX    = 128,
+            LCD_LINE_MAX_2  = LCD_LINE_MAX >> 1,
         };
     
         enum {
@@ -267,7 +263,7 @@ namespace pgc1000
             SCREEN_WIDTH    = 128,
             SCREEN_HEIGHT   = 64,
             
-            VRAM_SIZE       = Lcd::PAGE_MAX * Lcd::LINE_MAX,
+            VRAM_SIZE       = Lcd::LCD_PAGE_MAX * Lcd::LCD_LINE_MAX,
             BUFFER_MAX      = 2,
         };
     
@@ -290,8 +286,6 @@ namespace pgc1000
         
         //! @brief draw image of which max height is 8.
         void drawImage(s16 x, s16 y, const u8* img, u8 w, u8 h = 8);
-        
-        //void drawImage(s16 x, s16 y, const u8* img, u8 w, u8 h = 8);
         
         void drawImageShift(s8 sx, s8 sy, s16 x, s16 y, const u8* img, u8 w, u8 h = 8);
 
@@ -319,7 +313,7 @@ namespace pgc1000
     protected:
         Lcd mLcd;
         u8 mVRAM[BUFFER_MAX][VRAM_SIZE];
-        u8 mDirty[Lcd::LINE_MAX];
+        u8 mDirty[Lcd::LCD_LINE_MAX];
         u8 mBufferIndex;
         u32 mDrawMode;
         u32 mFrameCount;
@@ -373,7 +367,8 @@ namespace pgc1000
         void setFPS(u32 fps)
         {
             FPS = fps;
-            MICROSEC_PER_FRAME = 1000000.f / (f32)FPS;
+            MICROSEC_PER_FRAME = 1000000 / FPS;
+            FRAME_PER_MICROSEC = (f32)FPS * 0.000001f;
         }
         
         bool isFrameWait() const { return mFrameWait; }
@@ -429,16 +424,17 @@ namespace pgc1000
 
     protected:
         u32 FPS;
-        f32 MICROSEC_PER_FRAME;
+        u32 MICROSEC_PER_FRAME;
+        f32 FRAME_PER_MICROSEC;
         
         bool mFrameWait;
         u32 mFrameCount;
-        clock_t mPrevTime;
+        u32 mPrevTime;
         f32 mFrameTime;
         f32 mDeltaTime;
         f32 mFPS;
         u32 mFrameCountTemp;
-        clock_t mPrevTimeTemp;
+        u32 mPrevTimeTemp;
 
         BtnInfo mBtnInfoBlack;
         BtnInfo mBtnInfoRed;
@@ -564,7 +560,6 @@ namespace pgc1000
         DigitalOut mIC;
         BusOut mD;
     };
-    
     
     class Sound {
     public:

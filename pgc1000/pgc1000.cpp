@@ -60,40 +60,40 @@ void Lcd::init()
 void Lcd::blit(u8* pdata)
 {
     setAddress(CS_BOTH, 0);
-    for (u8 y = 0; y < PAGE_MAX; ++y) {
+    for (u8 y = 0; y < LCD_PAGE_MAX; ++y) {
         setPage(CS_BOTH, y);
-        for (u8 x = 0; x < LINE_MAX_2; ++x) {
-            writeDisplayData(CS_LEFT, pdata[x * PAGE_MAX + y]);
+        for (u8 x = 0; x < LCD_LINE_MAX_2; ++x) {
+            writeDisplayData(CS_LEFT, pdata[x * LCD_PAGE_MAX + y]);
         }
-        for (u8 x = LINE_MAX_2; x < LINE_MAX; ++x) {
-            writeDisplayData(CS_RIGHT, pdata[x * PAGE_MAX + y]);
+        for (u8 x = LCD_LINE_MAX_2; x < LCD_LINE_MAX; ++x) {
+            writeDisplayData(CS_RIGHT, pdata[x * LCD_PAGE_MAX + y]);
         }
     }
 }
 
 void Lcd::blit(u8* pdata, u8* pdirty)
 {
-    for (u8 y = 0; y < PAGE_MAX; ++y) {
+    for (u8 y = 0; y < LCD_PAGE_MAX; ++y) {
         setPage(CS_BOTH, y);
         const u8 mask = 1 << y;
 #if 0//debug
-        for (u8 x = 0; x < LINE_MAX_2; ++x) {
+        for (u8 x = 0; x < LCD_LINE_MAX_2; ++x) {
             writeDisplayData(CS_LEFT, (pdirty[x] & mask) ? 0xFF : 0x00);
         }
-        for (u8 x = LINE_MAX_2; x < LINE_MAX; ++x) {
+        for (u8 x = LCD_LINE_MAX_2; x < LCD_LINE_MAX; ++x) {
             writeDisplayData(CS_RIGHT, (pdirty[x] & mask) ? 0xFF : 0x00);
         }
 #else
-        for (u8 x = 0; x < LINE_MAX_2; ++x) {
+        for (u8 x = 0; x < LCD_LINE_MAX_2; ++x) {
             if (pdirty[x] & mask) {
                 setAddress(CS_LEFT, x);
-                writeDisplayData(CS_LEFT, pdata[x * PAGE_MAX + y]);
+                writeDisplayData(CS_LEFT, pdata[x * LCD_PAGE_MAX + y]);
             }
         }
-        for (u8 x = LINE_MAX_2; x < LINE_MAX; ++x) {
+        for (u8 x = LCD_LINE_MAX_2; x < LCD_LINE_MAX; ++x) {
             if (pdirty[x] & mask) {
                 setAddress(CS_RIGHT, x);
-                writeDisplayData(CS_RIGHT, pdata[x * PAGE_MAX + y]);
+                writeDisplayData(CS_RIGHT, pdata[x * LCD_PAGE_MAX + y]);
             }
         }
 #endif
@@ -462,9 +462,6 @@ void System::BtnInfo::update(bool now)
     }
 }
 
-static const f32 MICROSEC_PER_CLOCK = 1000000.f / CLOCKS_PER_SEC;
-//static const f32 MICROSEC_PER_FRAME = 1000000.f / System::FPS;
-
 const System::Desc System::DefaultDesc = {
     LED1,   // led1
     A1,     // btn_black
@@ -488,7 +485,8 @@ const System::Desc System::DefaultDesc = {
 
 System::System(const Desc &desc)
     : FPS(0)
-	, MICROSEC_PER_FRAME(0.f)
+	, MICROSEC_PER_FRAME(0)
+	, FRAME_PER_MICROSEC(0.f)
 	, mFrameWait(true)
     , mFrameCount(0)
     , mPrevTime(0)
@@ -525,7 +523,7 @@ void System::init()
     mFrameWait = true;
     mFrameTime = mFPS = 0.f;
     mFrameCount = mFrameCountTemp = 0;
-    mPrevTime = mPrevTimeTemp = clock();
+    mPrevTime = mPrevTimeTemp = us_ticker_read();
 
     memset(&mBtnInfoBlack, 0, sizeof(BtnInfo));
     memset(&mBtnInfoRed, 0, sizeof(BtnInfo));
@@ -577,11 +575,11 @@ void System::update()
     
 #if SYSTEM_ENABLE_MEASURE_FPS
     if (++mFrameCountTemp > FPS) {
-        const f32 elapsed = static_cast<f32>(clock() - mPrevTimeTemp) * MICROSEC_PER_CLOCK;
-        const f32 us = elapsed / FPS;
-        mFPS = 1000000.f / us;
+    	const u32 current = us_ticker_read();
+        const u32 elapsed = current - mPrevTimeTemp;
+        mFPS = 1000000.f * FPS / elapsed;
         mFrameCountTemp = 0;
-        mPrevTimeTemp = clock();
+        mPrevTimeTemp = current;
     }
 #endif
 }
@@ -589,15 +587,15 @@ void System::update()
 void System::frameWait()
 {
 #if SYSTEM_ENABLE_FRAME_WAIT
-    const f32 elapsed = static_cast<f32>(clock() - mPrevTime) * MICROSEC_PER_CLOCK;
+    const u32 elapsed = us_ticker_read() - mPrevTime;
     mFrameTime = elapsed * 0.001f;
     if (elapsed < MICROSEC_PER_FRAME) {
         mLed1 = 1;
         wait_us(MICROSEC_PER_FRAME - elapsed);
     }
     mLed1 = 0;
-    mDeltaTime = static_cast<f32>(clock() - mPrevTime) * MICROSEC_PER_CLOCK / MICROSEC_PER_FRAME;
-    mPrevTime = clock();
+    mDeltaTime = static_cast<f32>(us_ticker_read() - mPrevTime) * FRAME_PER_MICROSEC;
+    mPrevTime = us_ticker_read();
 #endif
 }
 
