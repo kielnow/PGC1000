@@ -45,7 +45,7 @@ void Benchmark::exec()
             vy *= -1;
     
         mRender.setDrawMode(DM_POSITIVE);
-        mRender.drawString(0, 0, "FPS:%.2f", mSystem.getFPS());
+        mRender.drawString(0, 0, "FPS:%.2f", mSystem.getActualFPS());
         //mRender.drawString(0, 6, "%u ", mSystem.dip());
 
         mRender.setDrawMode(DM_INVERSE);    
