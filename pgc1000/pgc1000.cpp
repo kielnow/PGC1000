@@ -593,9 +593,10 @@ void System::frameWait()
         mLed1 = 1;
         wait_us(MICROSEC_PER_FRAME - elapsed);
     }
+    const u32 current = us_ticker_read();
+    mDeltaTime = static_cast<f32>(current - mPrevTime) * FRAME_PER_MICROSEC;
+    mPrevTime = current;
     mLed1 = 0;
-    mDeltaTime = static_cast<f32>(us_ticker_read() - mPrevTime) * FRAME_PER_MICROSEC;
-    mPrevTime = us_ticker_read();
 #endif
 }
 
