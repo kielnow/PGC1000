@@ -2,7 +2,7 @@
 
 SW4STM32 Workspace
 
-## License
+## Licenses
 
 - mbed library  
 The mbed SDK is licensed under the permissive Apache 2.0 open source licence.  
