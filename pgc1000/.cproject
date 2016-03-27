@@ -6,7 +6,7 @@
 				<macros>
 					<stringMacro name="BackupCmd" type="VALUE_TEXT" value="[ -d &quot;${BackupDirPath}&quot; ] || mkdir -p &quot;${BackupDirPath}&quot; &amp;&amp; [ ! -f *.bin ] || mv *.bin &quot;${BackupDirPath}&quot;"/>
 					<stringMacro name="OutputFileName" type="VALUE_TEXT" value="${BuildArtifactFileBaseName}_${ConfigName}_$(shell date +%Y%m%d%H%M%S).bin"/>
-					<stringMacro name="BackupDirPath" type="VALUE_PATH_DIR" value="${workspace_loc}${DirectoryDelimiter}backup"/>
+					<stringMacro name="BackupDirPath" type="VALUE_PATH_DIR" value="${WorkspaceDirPath}${DirectoryDelimiter}backup"/>
 				</macros>
 				<externalSettings/>
 				<extensions>
@@ -106,7 +106,7 @@
 							</tool>
 							<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GLDErrorParser" id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.273205577" name="MCU G++ Linker" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.script.273205577" name="Linker Script (-T)" superClass="fr.ac6.managedbuild.tool.gnu.cross.cpp.linker.script" value="${workspace_loc:/${ProjName}/mbed/TARGET_NUCLEO_F401RE/TOOLCHAIN_GCC_ARM/STM32F401XE.ld}" valueType="string"/>
-								<option id="gnu.cpp.link.option.flags.273205577" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-specs=nosys.specs -specs=nano.specs" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.273205577" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-specs=nosys.specs" valueType="string"/>
 								<option id="gnu.cpp.link.option.userobjs.273205577" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbed/TARGET_NUCLEO_F401RE/TOOLCHAIN_GCC_ARM/stm32f4xx_hal_flash_ramfunc.o}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/mbed/TARGET_NUCLEO_F401RE/TOOLCHAIN_GCC_ARM/board.o}&quot;"/>
@@ -219,7 +219,6 @@
 				<macros>
 					<stringMacro name="BackupCmd" type="VALUE_TEXT" value="[ -d &quot;${BackupDirPath}&quot; ] || mkdir -p &quot;${BackupDirPath}&quot; &amp;&amp; [ ! -f *.bin ] || mv *.bin &quot;${BackupDirPath}&quot;"/>
 					<stringMacro name="OutputFileName" type="VALUE_TEXT" value="${BuildArtifactFileBaseName}_${ConfigName}_$(shell date +%Y%m%d%H%M%S).bin"/>
-					<stringMacro name="OutputName" type="VALUE_TEXT" value=""/>
 					<stringMacro name="BackupDirPath" type="VALUE_PATH_DIR" value="${WorkspaceDirPath}${DirectoryDelimiter}backup"/>
 				</macros>
 				<externalSettings/>
