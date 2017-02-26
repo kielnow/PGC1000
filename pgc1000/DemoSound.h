@@ -1,3 +1,5 @@
+#pragma once
+
 #include "pgc1000.h"
 
 namespace app {
