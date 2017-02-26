@@ -223,7 +223,7 @@ void Bricks::update()
 
             if (isCollided(bx, by, b.w, b.h, (s8)mBar.x, (s8)mBar.y, mBar.w, mBar.h)) {
                 if (b.vy > 0.f) {
-                    // 荳翫°繧�
+                    // 上から
                     b.y = mBar.y - (f32)b.h;
                     
                     const f32 w = (f32)mBar.w;
@@ -241,7 +241,7 @@ void Bricks::update()
                     b.vx = speed * sin(theta);
                     b.vy = speed * -cos(theta);
                 } else {
-                    // 荳九°繧�
+                    // 下から
                     //b.y = mBar.y + mBar.h;
                     //flipY = true;
                 }
@@ -394,7 +394,7 @@ void Bricks::update()
         
         mRender.setAnimSpeed(0);
         mRender.setDrawMode(DM_PAT_0);
-        mRender.drawFillRect(VIEW_L + (s16)b.x_old, VIEW_T + (s16)b.y_old, b.w, b.h);// 鬮倬�溘〒蜍輔°縺吶→阮�縺上※隕九∴縺ｪ縺�縺ｮ縺ｧ
+        mRender.drawFillRect(VIEW_L + (s16)b.x_old, VIEW_T + (s16)b.y_old, b.w, b.h);// 高速で動かすと薄くて見えないので
         mRender.setDrawMode(DM_POSITIVE);
         mRender.drawFillRect(VIEW_L + (s16)b.x, VIEW_T + (s16)b.y, b.w, b.h);
     }
