@@ -206,11 +206,11 @@ const u8 pgc1000::font[96][5] = {
 
 Render::Render()
     : mLcd()
-	, mBufferIndex(0)
+    , mBufferIndex(0)
     , mDrawMode(DM_POSITIVE)
-	, mFrameCount(0)
+    , mFrameCount(0)
     , mAnimSpeed(4)
-	, mAnimPat(PAT_0)
+    , mAnimPat(PAT_0)
 {
 }
 
@@ -414,7 +414,7 @@ void Render::drawPixel(s16 x, s16 y)
 #endif
 }
 
-void Render::drawFillRect(s16 x, s16 y, u8 w, u8 h)
+void Render::fillRect(s16 x, s16 y, u8 w, u8 h)
 {
     const s16 l = x + w;
     const s16 b = y + h;
@@ -425,6 +425,46 @@ void Render::drawFillRect(s16 x, s16 y, u8 w, u8 h)
         for (s16 j = y; j < b; ++j) {
             drawPixel(i, j);
         }
+    }
+}
+
+void Render::drawLine(s16 x1, s16 y1, s16 x2, s16 y2, bool conservative)
+{
+    const s16 dx = abs(x2 - x1);
+    const s16 dy = abs(y2 - y1);
+    const s16 vx = x1 < x2 ? 1 : -1;
+    const s16 vy = y1 < y2 ? 1 : -1;
+    s16 error = 0;
+    if (conservative) {
+        x2 += vx;
+        y2 += vy;
+    }
+    if (dx > dy) {
+        for (s16 x = x1, y = y1; x != x2; x += vx) {
+            drawPixel(x, y);
+            error += dy << 1;
+            if (error > dx) {
+                y += vy;
+                error -= dx << 1;
+            }
+        }
+    } else {
+        for (s16 x = x1, y = y1; y != y2; y += vy) {
+            drawPixel(x, y);
+            error += dx << 1;
+            if (error > dy) {
+                x += vx;
+                error -= dy << 1;
+            }
+        }
+    }
+}
+
+void Render::drawPolygon(u8 n, const s16* x, const s16* y)
+{
+    for (u8 i = 0; i < n; ++i) {
+        const u8 j = (i + 1) % n;
+        drawLine(x[i], y[i], x[j], y[j], false);
     }
 }
 
@@ -588,9 +628,9 @@ const System::Desc System::DefaultDesc = {
 
 System::System(const Desc &desc)
     : FPS(0)
-	, MICROSEC_PER_FRAME(0)
-	, FRAME_PER_MICROSEC(0.f)
-	, mFrameWait(true)
+    , MICROSEC_PER_FRAME(0)
+    , FRAME_PER_MICROSEC(0.f)
+    , mFrameWait(true)
     , mFrameCount(0)
     , mPrevTime(0)
     , mFrameTime(0.f)
@@ -598,8 +638,8 @@ System::System(const Desc &desc)
     , mFPS(0.f)
     , mFrameCountTemp(0)
     , mPrevTimeTemp(0)
-	, mAnalogX(0.f)
-	, mAnalogY(0.f)
+    , mAnalogX(0.f)
+    , mAnalogY(0.f)
     , mLed1(desc.led1)
     , mBtnBlack(desc.btn_black, PullUp)
     , mBtnRed(desc.btn_red, PullUp)
@@ -678,7 +718,7 @@ void System::update()
     
 #if SYSTEM_ENABLE_MEASURE_FPS
     if (++mFrameCountTemp > FPS) {
-    	const u32 current = us_ticker_read();
+        const u32 current = us_ticker_read();
         const u32 elapsed = current - mPrevTimeTemp;
         mFPS = 1000000.f * FPS / elapsed;
         mFrameCountTemp = 0;
@@ -753,7 +793,7 @@ const Psg::Desc Psg::DefaultDesc = {
 
 Psg::Psg(const Desc &desc)
     : mAddress(0xFF)
-	, mWR(desc.wr)
+    , mWR(desc.wr)
     , mCS(desc.cs)
     , mA0(desc.a0)
     , mIC(desc.ic)

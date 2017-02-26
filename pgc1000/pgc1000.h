@@ -9,7 +9,7 @@
 
 namespace pgc1000
 {
-
+    
     typedef int8_t      s8;
     typedef uint8_t     u8;
     typedef int16_t     s16;
@@ -17,7 +17,7 @@ namespace pgc1000
     typedef int32_t     s32;
     typedef uint32_t    u32;
     typedef float       f32;
-
+    
     enum CHIP_SELECT {
         CS_NONE     = 0,
         CS_LEFT     = 1,
@@ -177,7 +177,14 @@ namespace pgc1000
                 
         void drawPixel(s16 x, s16 y);
         
-        void drawFillRect(s16 x, s16 y, u8 w, u8 h);
+        //! deprecated
+        void drawFillRect(s16 x, s16 y, u8 w, u8 h){ fillRect(x, y, w, h); }
+
+        void fillRect(s16 x, s16 y, u8 w, u8 h);
+        
+        void drawLine(s16 x1, s16 y1, s16 x2, s16 y2, bool conservative = true);
+
+        void drawPolygon(u8 n, const s16* x, const s16* y);
         
         //! deprecated
         void drawImage8(s16 x, s16 y, const u8* img, u8 w, u8 h = 8){ drawImage(x, y, img, w, h); }
@@ -186,6 +193,9 @@ namespace pgc1000
         void drawImage(s16 x, s16 y, const u8* img, u8 w, u8 h = 8);
         
         void drawImageShift(s8 sx, s8 sy, s16 x, s16 y, const u8* img, u8 w, u8 h = 8);
+
+        //! @brief draw image of which max height is 8.
+        void drawGrayImage(s16 x, s16 y, const u32* img, u8 w, u8 h = 8);
 
         void drawString(s16 x, s16 y, const char* fmt, ...);
                 

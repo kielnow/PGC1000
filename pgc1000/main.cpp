@@ -7,6 +7,8 @@
 #include "DemoSound.h"
 #include "Bricks.h"
 #include "BadApple.h"
+#include "Reversi.h"
+#include "DemoLine.h"
 
 int main()
 {
@@ -17,7 +19,9 @@ int main()
     //app::DemoImage app;
     //app::DemoSound app;
     //app::Bricks app;
-    app::BadApple app;
+    //app::BadApple app;
+    app::Reversi app;
+    //app::DemoLine app;
     app.exec();
     return 0;
 }
